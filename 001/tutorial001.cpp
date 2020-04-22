@@ -5,7 +5,16 @@
     does nothing more than shoot 1 GeV electrons through 10m of liquid argon.
     Look for the next tutorial to see how this can be expanded.
 
+    Compile it with
+    g++ tutorial001.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial001
+
+    Where you have to define ${G4INCLUDES} to point to the include files in 
+    your local installation.
+
+    On linux, you can just source the compile.sh script.
+
     Gustavo Valdiviesso 2020
+
    ======================================================================== */
 
 #include <iostream>
