@@ -6,7 +6,7 @@
     Look for the next tutorial to see how this can be expanded.
 
     Compile it with
-    g++ tutorial001.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial001
+    g++ tutorial002.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial002
 
     Where you have to define ${G4INCLUDES} to point to the include files in 
     your local installation.
@@ -85,8 +85,13 @@ void MyActionInitialization::Build() const {
     SetUserAction( new MyPrimaryGenerator );
 };
 
+// Your Visualization Manager
+#include "G4VisExecutive.hh"
+#include "G4VisManager.hh"
+#include "G4UIExecutive.hh"
+
 // This is the Main code.
-int main(){
+int main(int argc, char *argv[]){
 
     auto *manager = new G4RunManager();
 
@@ -98,7 +103,19 @@ int main(){
     manager->SetUserInitialization( new MyActionInitialization() );
     manager->Initialize();
 
-    manager->BeamOn(100);
+    G4VisManager* visManager = new G4VisExecutive();
+    visManager->Initialize();
 
-    delete manager; // The manager will delete all other pointers owned by it.
+    G4UIExecutive * ui = new G4UIExecutive(argc, argv);
+    ui->SessionStart();
+
+    // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
+    // G4VisManager* visManager = new G4VisExecutive("Quiet");
+    visManager->Initialize();
+
+//    manager->BeamOn(100);
+
+    delete manager;
+    delete ui;
+    delete visManager;
 };
