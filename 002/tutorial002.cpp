@@ -1,14 +1,11 @@
 /* ========================================================================
 
-        This is the shortest working simulation on Geant4, which has 
-    all the basic elements to be considerer a simulation. Right now, it 
-    does nothing more than shoot 1 GeV electrons through 10m of liquid argon.
-    Look for the next tutorial to see how this can be expanded.
+        This is a continuation of tutorial001. 
 
     Compile it with
     g++ tutorial002.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial002
 
-    Where you have to define ${G4INCLUDES} to point to the include files in 
+    Where YOU have to define ${G4INCLUDES} to point to the include files in 
     your local installation.
 
     On linux, you can just source the compile.sh script.
@@ -57,22 +54,39 @@ G4VPhysicalVolume* MyDetector::Construct(){
 #include "G4VUserActionInitialization.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
-#include "G4Electron.hh"
+#include "G4Geantino.hh"
 
 class MyPrimaryGenerator : public G4VUserPrimaryGeneratorAction{
+private:
+	G4ParticleGun *m_ParticleGun;
 public:
+
+	MyPrimaryGenerator();
+	~MyPrimaryGenerator(); 
+
     virtual void GeneratePrimaries(G4Event* anEvent) override;
+};
+
+MyPrimaryGenerator::MyPrimaryGenerator() : 
+	G4VUserPrimaryGeneratorAction(), 
+	m_ParticleGun( new G4ParticleGun( G4Geantino::Definition() ) ) 
+{
+
+};
+
+MyPrimaryGenerator::~MyPrimaryGenerator(){
+
+	delete m_ParticleGun;
 };
 
 void MyPrimaryGenerator::GeneratePrimaries(G4Event* anEvent){
 
-    auto *particleGun = new G4ParticleGun( G4Electron::Definition() );
-    particleGun->GeneratePrimaryVertex(anEvent);
+    m_ParticleGun->GeneratePrimaryVertex(anEvent);
 
     // Not the best way of doing it, but let's ask a few things from the Primary Generator
     std::cout << "Run ID      " << anEvent->GetEventID() << std::endl;
-    std::cout << "Primary     " << particleGun->GetParticleDefinition()->GetParticleName() << std::endl;
-    std::cout << "Enery (MeV) " << particleGun->GetParticleEnergy() << std::endl;
+    std::cout << "Primary     " << m_ParticleGun->GetParticleDefinition()->GetParticleName() << std::endl;
+    std::cout << "Enery (MeV) " << m_ParticleGun->GetParticleEnergy() << std::endl;
 
 };
 
@@ -85,37 +99,33 @@ void MyActionInitialization::Build() const {
     SetUserAction( new MyPrimaryGenerator );
 };
 
-// Your Visualization Manager
-#include "G4VisExecutive.hh"
-#include "G4VisManager.hh"
+// This is the User Interface
 #include "G4UIExecutive.hh"
+#include "G4UImanager.hh"
 
 // This is the Main code.
-int main(int argc, char *argv[]){
+int main(int argc, char** argv){
 
-    auto *manager = new G4RunManager();
+    auto *runManager = new G4RunManager();
 
     auto *factory = new G4PhysListFactory();
     auto *physicsList = factory->GetReferencePhysList("Shielding");
 
-    manager->SetUserInitialization( new MyDetector() );
-    manager->SetUserInitialization( physicsList );
-    manager->SetUserInitialization( new MyActionInitialization() );
-    manager->Initialize();
+    runManager->SetUserInitialization( new MyDetector() );
+    runManager->SetUserInitialization( physicsList );
+    runManager->SetUserInitialization( new MyActionInitialization() );
+    runManager->Initialize();
 
-    G4VisManager* visManager = new G4VisExecutive();
-    visManager->Initialize();
 
-    G4UIExecutive * ui = new G4UIExecutive(argc, argv);
-    ui->SessionStart();
+	if (argc == 1){
+		auto *uiExecutive = new G4UIExecutive(argc,argv);
+		uiExecutive->SessionStart();
+		delete uiExecutive;
+	} else {
+		auto *uiManager = G4UImanager::GetUIpointer();
+		uiManager->ApplyCommand("/control/execute " + G4String(argv[1]) );
+	}
 
-    // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
-    // G4VisManager* visManager = new G4VisExecutive("Quiet");
-    visManager->Initialize();
-
-//    manager->BeamOn(100);
-
-    delete manager;
-    delete ui;
-    delete visManager;
+    delete runManager; // The runManager will delete all other pointers owned by it.
+	
 };
