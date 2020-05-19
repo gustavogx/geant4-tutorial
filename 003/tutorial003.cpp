@@ -1,9 +1,9 @@
 /* ========================================================================
 
-        This is a continuation of tutorial001. 
+        This is a continuation of tutorial003. 
 
     Compile it with
-    g++ tutorial002.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial002
+    g++ tutorial003.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial003
 
     Where YOU have to define ${G4INCLUDES} to point to the include files in 
     your local installation.
@@ -111,8 +111,11 @@ int main(int argc, char** argv){
     runManager->SetUserInitialization( new MyActionInitialization() );
     runManager->Initialize();
 
+    auto *visManager = new G4VisExecutive();
+    visManager->Initialise();
+
 	if (argc == 1){
-		auto *uiExecutive = new G4UIExecutive(argc,argv,"csh");
+		auto *uiExecutive = new G4UIExecutive(argc,argv,"Qt");
 		uiExecutive->SessionStart();
 		delete uiExecutive;
 	} else {
@@ -121,5 +124,5 @@ int main(int argc, char** argv){
 	}
 
     delete runManager; // The runManager will delete all other pointers owned by it.
-	
+	delete visManager;
 };
