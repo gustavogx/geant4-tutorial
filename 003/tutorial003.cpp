@@ -111,11 +111,8 @@ int main(int argc, char** argv){
     runManager->SetUserInitialization( new MyActionInitialization() );
     runManager->Initialize();
 
-    auto *visManager = new G4VisExecutive();
-    visManager->Initialise();
-
 	if (argc == 1){
-		auto *uiExecutive = new G4UIExecutive(argc,argv,"Qt");
+		auto *uiExecutive = new G4UIExecutive(argc,argv,"csh");
 		uiExecutive->SessionStart();
 		delete uiExecutive;
 	} else {
@@ -124,5 +121,4 @@ int main(int argc, char** argv){
 	}
 
     delete runManager; // The runManager will delete all other pointers owned by it.
-	delete visManager;
 };
