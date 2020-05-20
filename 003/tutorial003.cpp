@@ -1,6 +1,6 @@
 /* ========================================================================
 
-        This is a continuation of tutorial003. 
+        This is a continuation of tutorial002. 
 
     Compile it with
     g++ tutorial003.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial003
@@ -98,6 +98,13 @@ void MyActionInitialization::Build() const {
 #include "G4UIExecutive.hh"
 #include "G4UImanager.hh"
 
+#define G4VIS_USE_OPENGLX
+#define G4VIS_USE_OPENGLQT
+
+// This is the Visualization Engine
+#include "G4VisExecutive.hh"
+#include "G4VisManager.hh"
+
 // This is the Main code.
 int main(int argc, char** argv){
 
@@ -111,14 +118,21 @@ int main(int argc, char** argv){
     runManager->SetUserInitialization( new MyActionInitialization() );
     runManager->Initialize();
 
+    auto *visManager = new G4VisExecutive();
+    visManager->Initialise();
+
+	auto *uiExecutive = new G4UIExecutive(argc,argv,"Qt");
+
+
 	if (argc == 1){
-		auto *uiExecutive = new G4UIExecutive(argc,argv,"csh");
-		uiExecutive->SessionStart();
-		delete uiExecutive;
+        uiExecutive->SessionStart();
 	} else {
 		auto *uiManager = G4UImanager::GetUIpointer();
 		uiManager->ApplyCommand("/control/execute " + G4String(argv[1]) );
+        uiExecutive->SessionStart();
 	}
 
     delete runManager; // The runManager will delete all other pointers owned by it.
+	delete uiExecutive;
+    delete visManager;
 };
