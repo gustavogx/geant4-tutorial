@@ -38,6 +38,6 @@
 # Between energy and momentum, geant4 will follow the last instruction before beamOn.
 
 /gun/particle mu+
-/gun/energy 10 MeV
-/gun/position -10 0 0 m
+/gun/energy 50 MeV
+/gun/position -0.5 0 0 m
 /run/beamOn 1

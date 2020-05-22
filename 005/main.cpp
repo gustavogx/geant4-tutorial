@@ -1,14 +1,14 @@
 /* ========================================================================
 
-        This is a continuation of tutorial003. 
+    This is a series of tutorials on Geant4
 
     Compile it with
-    g++ tutorial004.cpp `geant4-config --libs` -I${G4INCLUDES} -o tutorial004
+    source compile.sh
+
+    or take a look inside compile.sh to see the command line.
 
     Where YOU have to define ${G4INCLUDES} to point to the include files in 
     your local installation.
-
-    On linux, you can just source the compile.sh script.
 
     Gustavo Valdiviesso 2020
 
