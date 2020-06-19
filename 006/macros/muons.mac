@@ -28,9 +28,9 @@
 # Let's ask geant4 to report more details about the simulation
 # by ajusting the verbosity level for each subsystem:
 
-/run/verbose 1
-/event/verbose 1
-/tracking/verbose 1
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
 
 # Now we define the source. Right now it is a mono-energetic beam of muons+
 # We can set either energy or momentum, 
