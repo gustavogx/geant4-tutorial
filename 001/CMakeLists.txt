@@ -39,7 +39,7 @@ include_directories(
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(tutorial 
-	tutorial.cpp 
+	main.cpp 
 #	${sources} 
 #	${headers}
 	)
